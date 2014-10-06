@@ -20,7 +20,11 @@ var settings = settings || {};
     });
   };
 
-  if (!($('body#option').size())) { return; }
+  settings.status = function() {
+    return new Store('status');
+  };
+
+    if (!($('body#option').size())) { return; }
   $(window).load(function () {
     ga('send', 'pageview', window.location.toString());
 

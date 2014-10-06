@@ -35,11 +35,14 @@
         "js/util.js",
         "js/message.js",
         "js/window.js"
+      ],
+      "css" : [
+        "css/window.css"
       ]
     }
   ],
 
-  "content_security_policy": "script-src 'self' https://www.google-analytics.com https://ssl.google-analytics.com https://apis.google.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' https://platform.twitter.com https://api.twitter.com https://syndication.twitter.com https://www.google-analytics.com https://ssl.google-analytics.com https://apis.google.com; object-src 'self'",
   "permissions": [
     "notifications",
     "tabs",

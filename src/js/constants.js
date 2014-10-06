@@ -1,5 +1,5 @@
 var constants = {
-  appname: 'アイギスウィジェット',
+  appname: 'twitまとめ',
   dbversion: '1',
   maxdrop: 7,
   aigisurl: 'http://www.dmm.com/netgame/social/-/gadgets/=/app_id=177037/?widget=true',
@@ -16,6 +16,9 @@ var constants = {
   capturedir: '/pic',
   localcapturegen: 5,
   msg: {
+    matome: 'matome',
+    check: 'check',
+    clear: 'clear',
     notice: 'notice',
     config: 'config',
     badge: 'badge',

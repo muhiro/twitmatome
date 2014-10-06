@@ -1,52 +1,13 @@
 var aigisWidget = aigisWidget || {};
 (function() {
-  var aigispopup = null;
-
   'use strict';
-//  aigisWidget.init();
+  var aigispopup = null;
   var badgestatus = 1;
-//  var dispatcher = new aigisWidget.dispatcher();
-
-//  chrome.webRequest.onBeforeRequest.addListener(function(data){
-//    if(data.method === 'POST') {
-//      var keyword = data.url.match(/millennium-war.net\/(.*)/)[1];
-//      var a = data.requestBody.raw[0].bytes;
-//      console.log(util.dumpArrayBuffer(a));
-//
-//      util.log('backgroud:'+util.getTimestamp()+':'+keyword+':'+util.ab2str(data.requestBody.raw[0].bytes));
-//      if (dispatcher.routing(keyword)) {
-//        dispatcher.requestBody = util.ab2str(data.requestBody.raw[0].bytes);
-//      }
-//    }
-//  },{'urls':[
-//    'https://millennium-war.net/*',
-//    'https://all.millennium-war.net/*'
-//  ]},['requestBody']);
-//
-//  chrome.webRequest.onCompleted.addListener(function(detail){
-//    if(detail.method === 'POST'){
-//      dispatcher.execute(detail)
-//    }
-//  },{'urls':[
-//    'https://millennium-war.net/*',
-//    'https://all.millennium-war.net/*'
-//  ]},[]);
+  var twitlist = new Array();
 
   chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log('RECEIVE:'+request.type);
     switch(request.type) {
-
-
-      case 'canvas_ini':
-        console.log(request.log);
-        break;
-      case 'canvas_key':
-        console.log(request.log);
-        //var url = webkitURL.createObjectURL(request.log);
-//        var filename = '1.webm';
-//        aigisWidget.storage.writeblob('test'+'/'+filename, request.log, function(result) {
-//        });
-        break;
 
       case constants.msg.config:
         //var response = {config: settings};
@@ -82,20 +43,14 @@ var aigisWidget = aigisWidget || {};
         break;
 
       case constants.msg.popup:
-        var url;
-        if (settings.config().get('r18')) {
-          url = constants.aigisr18url;
-        } else {
-          url = constants.aigisurl;
-        }
         //ツールバーは72
         aigispopup = window.open(
-          url,
-          'main',
-            'width=' + constants.popup.width +
-            ',height=' + constants.popup.height +
-            ',left=' + aigisWidget.status().get('screenX') +
-            ',top=' + aigisWidget.status().get('screenY') +
+          '../browser_action/browser_popup.html',
+          'dashbord',
+            'width=570' +
+            ',height=920' +
+            ',left=' + settings.status().get('screenX') +
+            ',top=' + settings.status().get('screenY') +
             ',location=no' +
             ',menubar=no' +
             ',toolbar=no' +
@@ -104,17 +59,6 @@ var aigisWidget = aigisWidget || {};
             ',resizable=no'
         );
         aigispopup.focus();
-        ga('send', 'pageview', url+'&open=true');
-        ga('send', 'event', 'view', 'load', 'start aigis');
-//    chrome.windows.create({
-//      url: 'http://www.dmm.com/netgame/social/-/gadgets/=/app_id=156462/?widget=true',
-//      width:  constants.popup.width,
-//      height: constants.popup.height,
-//      left: 100,
-//      top: 100,
-//      type: 'popup'
-//    },function(window){
-//    });
         break;
       case constants.msg.popupResize:
         //console.log("%s:%s", sender.tab.windowId, request.type);
@@ -134,35 +78,6 @@ var aigisWidget = aigisWidget || {};
             }
           });
         }
-        break;
-
-      case constants.msg.movie:
-/*
-        canvaspopup = window.open(
-          'test.html',
-          'sub',
-            'width=' + constants.popup.width +
-            ',height=' + constants.popup.height +
-            ',left=' + aigisWidget.status().get('screenX') +
-            ',top=' + aigisWidget.status().get('screenY') +
-            ',location=no' +
-            ',menubar=no' +
-            ',toolbar=no' +
-            ',status=no' +
-            ',scrollbars=no' +
-            ',resizable=no'
-        );
-*/
-       video = new Whammy.Video(5);
-
-      console.log(sender);
-        aigisWidget.storage.removeRecursively('/test', function () {
-          aigisWidget.storage.mkdir('/test', function () {
-            setTimeout(function() {
-              test2(sender.tab.windowId, 1);
-            },100);
-          });
-        });
         break;
 
       case constants.msg.capture:
@@ -196,190 +111,14 @@ var aigisWidget = aigisWidget || {};
 //        });
         break;
 
-      case constants.msg.updateDrop:
-        var drop = request.drop;
-        var db = new aigisWidget.aigisdb();
-        var sysdate = new Date();
-
-        db.open(function() {
-          db.putDrop(
-            sysdate.getTime()
-            , drop.mapid
-            , drop.mapname
-            , drop.star
-            , drop.cleartime
-            , drop.drop
-            , function () {
-              db.close();
-//              aigisWidget.storage.append(constants.file.dropfile
-//                ,aigisWidget.exportformatDrop(sysdate, drop)
-//                , function() {
-//                  chrome.runtime.sendMessage({type: constants.msg.uploadFileGoogleDrive
-//                    ,fileName: constants.file.dropfile
-//                    ,fullPath: '/'+constants.file.dropfile
-//                  });
-//                });
-            }
-          );
-        });
-        break;
-
-      case constants.msg.updateGacha:
-        var gacha = request.gacha;
-        var db = new aigisWidget.aigisdb();
-        var sysdate = new Date();
-        db.open(function() {
-          db.putGacha(
-            sysdate.getTime()
-            , gacha.type
-            , gacha.classid
-            , gacha.classname
-            , gacha.unitid
-            , gacha.unitname
-            , gacha.rarity
-            , function () {
-              db.close();
-
-//              aigisWidget.storage.append(constants.file.gachafile
-//                ,aigisWidget.exportformatGacha(sysdate, gacha)
-//                , function() {
-//                  chrome.runtime.sendMessage({type: constants.msg.uploadFileGoogleDrive
-//                    ,fileName: constants.file.gachafile
-//                    ,fullPath: '/'+constants.file.gachafile
-//                  });
-//              });
-            }
-          );
-        });
-        break;
-
-      case constants.msg.updateAllDrop:
-        var db = new aigisWidget.aigisdb();
-        aigisWidget.notice.create(
-          constants.notice.updateAll
-          , {dbname: constants.file.dropfile}
-        );
-        db.open(function() {
-          db.updateAllDrop(function () {
-            db.close();
-            chrome.runtime.sendMessage({type: constants.msg.reexportDrop});
-          });
-        });
-        break;
-
-      case constants.msg.updateAllGacha:
-        var db = new aigisWidget.aigisdb();
-        aigisWidget.notice.create(
-          constants.notice.updateAll
-          , {dbname: constants.file.gachafile}
-        );
-        db.open(function() {
-          db.updateAllGacha(function () {
-            db.close();
-            chrome.runtime.sendMessage({type: constants.msg.reexportGacha});
-          });
-        });
-        break;
-
-      case constants.msg.reexportDrop:
-        aigisWidget.storage.remove(constants.file.dropfile, function() {
-//          var db = new aigisWidget.aigisdb();
-//          db.open(function() {
-//            db.getAllDrop(function(drops) {
-//              if(drops.length < 1) {
-//                db.close();
-//                return;
-//              }
-//              util.asynceach(drops, function(drop) {
-//                var deferred = new $.Deferred;
-//                aigisWidget.storage.append(constants.file.dropfile
-//                  , aigisWidget.exportformatDrop(new Date(drop.timestamp), drop)
-//                  , function () {
-//                    //書き込み完了してから次の書き込み要求
-//                    deferred.resolve();
-//                  });
-//                return deferred.promise();
-//              }, function() {
-//                //終了処理
-//                db.close();
-//                chrome.runtime.sendMessage({type: constants.msg.uploadFileGoogleDrive
-//                  , fileName: constants.file.dropfile
-//                  , fullPath: '/'+constants.file.dropfile
-//                });
-//                aigisWidget.notice.create(constants.notice.reexportCompleted
-//                  , {filename: constants.file.dropfile}
-//                );
-//              });
-//            });
-//          });
-        });
-        break;
-
-      case constants.msg.reexportGacha:
-        aigisWidget.storage.remove(constants.file.gachafile, function() {
-//          var db = new aigisWidget.aigisdb();
-//          db.open(function () {
-//            db.getAllGacha(function (gachas) {
-//              if(gachas.length < 1) {
-//                db.close();
-//                return;
-//              }
-//              util.asynceach(gachas, function(gacha) {
-//                var deferred = new $.Deferred;
-//                aigisWidget.storage.append(constants.file.gachafile
-//                  , aigisWidget.exportformatGacha(new Date(gacha.timestamp), gacha)
-//                  , function () {
-//                    //書き込み完了してから次の書き込み要求
-//                    deferred.resolve();
-//                  });
-//                return deferred.promise();
-//              }, function() {
-//                //終了処理
-//                db.close();
-//                chrome.runtime.sendMessage({type: constants.msg.uploadFileGoogleDrive
-//                  , fileName: constants.file.gachafile
-//                  , fullPath: '/'+constants.file.gachafile
-//                });
-//                aigisWidget.notice.create(constants.notice.reexportCompleted
-//                  , {filename: constants.file.gachafile}
-//                );
-//              });
-//            });
-//          });
-        });
-        break;
-
-      case constants.msg.uploadImageGoogleDrive:
-        aigisWidget.storage.readdataurl(request.fullPath, function(data) {
-          ggldrive.upload('image', request.fileName, data, function(filename) {
-            aigisWidget.notice.create(constants.notice.captureCompleted, {filename: request.fileName});
-          });
-        });
-        break;
-
-      case constants.msg.uploadFileGoogleDrive:
-        //TODO:今のやり方だと同名ファイルをgoogle driveにアップロードすると上書きされない
-//        aigisWidget.storage.readdataurl(request.fullPath, function(data) {
-//          data.file(
-//            function(file) {
-//              var reader = new FileReader();
-//              reader.onloadend = function(e) {
-//                ggldrive.upload('text', request.fileName, e.target.result, function(filename) {});
-//              };
-//              reader.readAsText(file);
-//            }
-//          )
-//        });
-        break;
-
       case constants.msg.saveResize:
-        aigisWidget.status().set('screenX', request.screenX);
-        aigisWidget.status().set('screenY', request.screenY);
+        settings.status().set('screenX', request.screenX);
+        settings.status().set('screenY', request.screenY);
         break;
 
       case constants.msg.close:
-        aigisWidget.status().set('screenX', request.screenX);
-        aigisWidget.status().set('screenY', request.screenY);
+        settings.status().set('screenX', request.screenX);
+        settings.status().set('screenY', request.screenY);
         var url;
         if (settings.config().get('r18')) {
           url = constants.aigisr18url;
@@ -404,6 +143,33 @@ var aigisWidget = aigisWidget || {};
         break;
 
       case constants.msg.test:
+        break;
+
+      case constants.msg.matome:
+        //https://syndication.twitter.com/tweets.json?ids=516688779411611648&lang=ja&callback=twttr.tfw.callbacks.cb0&suppress_response_codes=true
+        //var v = 'https://syndication.twitter.com/tweets.json?ids='+request.key[0]+'&lang=ja&callback=?&suppress_response_codes=true';
+        var v = 'https://api.twitter.com/1/statuses/oembed.json?callback=?&hide_media=false&hide_thread=false&id='+request.key[0]+'&lang=ja';
+        var dateObj = new Date;
+        console.log(v);
+        $.getJSON(v, function (json) {
+          //blockquote
+          var tw = json.html.replace(/<script("[^"]*"|'[^']*'|[^'">])*>*<\/script>/, '');
+          //tw.replace('<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>', '');
+          twitlist.push(tw);
+        });
+        break;
+
+      case constants.msg.check:
+        if (twitlist.length != request.length) {
+          //var response = {config: settings};
+          var response = {};
+          response['list'] = twitlist;
+          sendResponse(response);
+        };
+        break;
+
+      case constants.msg.clear:
+        twitlist = new Array();
         break;
     }
   });

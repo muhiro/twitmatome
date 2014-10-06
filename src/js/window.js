@@ -1,18 +1,4 @@
 $(function() {
-  setTimeout(function() {
-    chrome.runtime.sendMessage({type: constants.msg.config
-      ,key: [
-        'r18'
-      ]
-    }, function(response) {
-      if (response.r18) {
-        $('title').text(message.fm.appnamer18);
-      } else {
-        $('title').text(message.fm.appname);
-      }
-    });
-  },500);
-
 //  /**
 //   * 最初の画面サイズ調整
 //   */
@@ -27,12 +13,24 @@ $(function() {
 //    },1000);
 //  });
 
-  setTimeout(function() {
-    $('.stream-item-header').append('<a class="twitmatome-btn">まとめる</a>');
-  },1000);
-  //https://syndication.twitter.com/tweets.json?ids=516688779411611648&lang=ja&callback=twttr.tfw.callbacks.cb0&suppress_response_codes=true
+  $('.ProfileTweet-authorDetails').append('<a class="twitmatome-btn">まとめる</a>');
+  $(document).on('DOMNodeInserted', function(e) {
+    var element = e.target;
+    $(element).find('.ProfileTweet-authorDetails').each(function() {
+      $(this).append('<a class="twitmatome-btn">まとめる</a>');
+    });
+  });
 
   $(document).on('click', '.twitmatome-btn', function(e) {
-    alert('aaa');
+    var a = $(this).parent('.ProfileTweet-authorDetails').find('.ProfileTweet-timestamp');
+    console.log(a.prop('href'));
+    var b = a.prop('href').split('/');
+    chrome.runtime.sendMessage({type: constants.msg.matome
+      ,key: [
+        b[b.length - 1]
+      ]
+    }, function(response) {
+    });
+    $(this).addClass('twitmatome-btn-dis');
   });
 });
